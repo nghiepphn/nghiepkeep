@@ -1,0 +1,179 @@
+<h2>Sign in/up Form</h2>
+<div
+    [class]="mode"
+    id="container"
+>
+    <div class="form-container sign-up-container">
+        <form
+            [formGroup]="createForm"
+            (ngSubmit)="onSignUp()"
+        >
+            <h1>Create Account</h1>
+            <span>or use your email for registration</span>
+            <input
+                type="text"
+                placeholder="Name"
+                formControlName="username"
+            />
+            <div
+                *ngIf="submitted && f['username'].errors"
+                class="invalid-feedback"
+            >
+                <div *ngIf="f['username'].errors['required']">Username is required</div>
+                <div *ngIf="f['username'].errors['minlength']">Username must be at least 6 characters</div>
+                <div *ngIf="f['username'].errors['maxlength']">Username must not exceed 20 characters</div>
+            </div>
+            <input
+                type="email"
+                placeholder="Email"
+                formControlName="email"
+            />
+            <div
+                *ngIf="submitted && f['email'].errors"
+                class="invalid-feedback"
+            >
+                <div *ngIf="f['email'].errors['required']">Email is required</div>
+                <div *ngIf="f['email'].errors['email']">Email incorrect format</div>
+            </div>
+            <input
+                type="password"
+                placeholder="Password"
+                formControlName="password"
+            />
+            <div
+                *ngIf="submitted && f['password'].errors"
+                class="invalid-feedback"
+            >
+                <div *ngIf="f['password'].errors['required']">Password is required</div>
+                <div *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</div>
+                <div *ngIf="f['password'].errors['maxlength']">Password must not exceed 20 characters</div>
+            </div>
+            <input
+                type="text"
+                placeholder="First Name"
+                formControlName="firstName"
+            />
+            <div
+                *ngIf="submitted && f['firstName'].errors"
+                class="invalid-feedback"
+            >
+                <div *ngIf="f['firstName'].errors['required']">FirstName is required</div>
+            </div>
+
+            <input
+                type="text"
+                placeholder="Last Name"
+                formControlName="lastName"
+            />
+            <div
+                *ngIf="submitted && f['lastName'].errors"
+                class="invalid-feedback"
+            >
+                <div *ngIf="f['lastName'].errors['required']">LastName is required</div>
+            </div>
+
+            <select
+                name="gender"
+                class="gender-select"
+                formControlName="gender"
+            >
+                <option
+                    selected
+                    value="male"
+                >
+                    Male
+                </option>
+                <option value="female">Female</option>
+            </select>
+            <input
+                type="date"
+                placeholder="Birthdate"
+                formControlName="birthDate"
+            />
+            <div
+                *ngIf="submitted && f['birthDate'].errors"
+                class="invalid-feedback"
+            >
+                <div *ngIf="f['birthDate'].errors['required']">BirthDate is required</div>
+            </div>
+            <span
+                *ngIf="isHasErrorRegister"
+                style="color: red"
+                >{{ msgErrorRegister }}
+            </span>
+            <button type="submit">Sign Up</button>
+        </form>
+    </div>
+    <div class="form-container sign-in-container">
+        <form
+            [formGroup]="profileForm"
+            (ngSubmit)="onSubmit()"
+        >
+            <h1>Sign in</h1>
+            <span>or use your account</span>
+            <input
+                type="text"
+                placeholder="Username"
+                formControlName="username"
+            />
+            <div
+                *ngIf="signup && l['username'].errors"
+                class="invalid-feedback"
+            >
+                <div *ngIf="l['username'].errors['required']">Username is required</div>
+            </div>
+            <input
+                type="password"
+                placeholder="Password"
+                formControlName="password"
+            />
+            <div
+                *ngIf="signup && l['password'].errors"
+                class="invalid-feedback"
+            >
+                <div *ngIf="l['password'].errors['required']">Password is required</div>
+            </div>
+            <span
+                *ngIf="isHasError"
+                style="color: red"
+                >{{ msgErrorLogin }}
+            </span>
+            <a href="#">Forgot your password?</a>
+            <button type="submit">Sign In</button>
+        </form>
+    </div>
+    <div class="overlay-container">
+        <div class="overlay">
+            <div class="overlay-panel overlay-left">
+                <h1>Welcome Back!</h1>
+                <p>To keep connected with us please login with your personal info</p>
+                <button
+                    class="ghost"
+                    id="signIn"
+                    (click)="switchMode(false)"
+                >
+                    Sign In
+                </button>
+            </div>
+            <div class="overlay-panel overlay-right">
+                <h1>Hello, Friend!</h1>
+                <p>Enter your personal details and start journey with us</p>
+                <button
+                    class="ghost"
+                    id="signUp"
+                    (click)="switchMode(true)"
+                >
+                    Sign Up
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 
+thong bao sign up thanh cong
+clear form khi sign up thanh cong
+hien thong bao api tra ve
+chuyen sign in ve form giong sign up
+tao interface cho form control
+
+ -->

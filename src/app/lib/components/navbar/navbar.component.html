@@ -1,0 +1,222 @@
+<nav>
+    <div class="logo-area">
+        <div class="tooltip">
+            <span class="material-icons-outlined hover">menu</span>
+            <span class="tooltip-text">Main Menu</span>
+        </div>
+
+        <img
+            class="gb_uc gb_7d"
+            src="https://www.gstatic.com/images/branding/product/1x/keep_2020q4_48dp.png"
+            srcset="
+                https://www.gstatic.com/images/branding/product/1x/keep_2020q4_48dp.png 1x,
+                https://www.gstatic.com/images/branding/product/2x/keep_2020q4_48dp.png 2x
+            "
+            alt=""
+            aria-hidden="true"
+            style="width: 40px; height: 40px"
+        />
+        <span class="logo-text">Keep</span>
+    </div>
+
+    <div class="search-area">
+        <div class="tooltip">
+            <span class="material-icons-outlined hover">search</span>
+            <span class="tooltip-text">Search</span>
+        </div>
+        <input
+            class="input-search"
+            type="text"
+            placeholder="Search"
+        />
+    </div>
+    <div class="settings-area">
+        <div class="tooltip">
+            <span class="material-icons-outlined hover">refresh</span>
+            <span class="tooltip-text">Refresh</span>
+        </div>
+        <div class="tooltip">
+            <span class="material-icons-outlined hover">view_agenda</span>
+            <span class="tooltip-text">List View</span>
+        </div>
+        <div class="tooltip">
+            <span class="material-icons-outlined hover">settings</span>
+            <span class="tooltip-text">Settings</span>
+        </div>
+        <!-- <div class="dropdown">
+            <div
+                class="tooltip"
+                tabindex="0"
+                role="button"
+            >
+                <span class="material-icons-outlined hover">notifications_active</span>
+                <span class="tooltip-text">Notification</span>
+            </div>
+            <ul
+                tabindex="0"
+                class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+                style="
+                    border: 1px solid #e0e1e0;
+                    box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
+                "
+                (click)="showNoti()"
+            >
+                <li><a>Item 1</a></li>
+                <li><a>Item 2</a></li>
+            </ul>
+        </div> -->
+
+        <div class="tooltip">
+            <div class="dropdown dropdown-bottom dropdown-end">
+                <span
+                    class="material-icons-outlined hover"
+                    (click)="showNoti()"
+                    #iconNofi
+                    tabindex="0"
+                    >notifications_active</span
+                >
+
+                <div
+                    x-show="dropdownOpen"
+                    class="dropdown-info absolute right-0 mt-4 flex w-62.5 flex-col rounded-sm bg-white shadow-default dark:border-strokedark dark:bg-boxdark"
+                    #listNoti
+                    *ngIf="isShowNoti"
+                    style="width: 20rem; margin-top: 0; border-radius: 1rem"
+                >
+                    <ul
+                        class="dropdown-content menu bg-base-100 rounded-box z-[1] w-120 p-2 shadow"
+                        tabindex="0"
+                        style="
+                            padding-top: 0;
+                            padding-bottom: 0;
+                            border: 1px solid #e0e1e0;
+                            box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
+                        "
+                    >
+                        <li *ngFor="let notification of notifications; let i = index">
+                            <a
+                                href="#"
+                                class="flex items-center px-4 py-3 border-b hover:bg-gray-100 -mx-2"
+                            >
+                                <img
+                                    class="h-8 w-8 rounded-full object-cover mx-1"
+                                    src="{{ notification.avatarUrl }}"
+                                    alt="avatar"
+                                />
+                                <p class="text-gray-600 text-sm mx-2">
+                                    {{ notification.content }}
+                                </p>
+                                <!-- <span>{{ notification.createdAt }}</span> -->
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <span
+                    class="tooltip-text"
+                    *ngIf="!isShowNoti"
+                    >Notification</span
+                >
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-actions-area">
+        <div class="tooltip">
+            <span class="material-icons-outlined hover">apps</span>
+            <span class="tooltip-text">Apps</span>
+        </div>
+        <div class="tooltip">
+            <div class="dropdown dropdown-bottom dropdown-end">
+                <span id="avatar"
+                    ><img
+                        tabindex="0"
+                        [class]="showAvatar"
+                        src="{{ avatarLink }}"
+                        (click)="showUserInfo()"
+                        #avatar
+                /></span>
+                <div
+                    #userInfo
+                    *ngIf="isShow"
+                    x-show="dropdownOpen"
+                    class="dropdown-info absolute right-0 mt-4 flex w-62.5 flex-col rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark"
+                >
+                    <ul
+                        tabindex="0"
+                        class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+                        style="
+                            border: 1px solid #e0e1e0;
+                            box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
+                        "
+                    >
+                        <li
+                            style="text-align: center; padding-top: 10px; font-weight: bold"
+                            class="text-info"
+                        >
+                            {{ userName }}
+                            <button
+                                type="button"
+                                s
+                                class="button- close"
+                                style="position: absolute; right: 10px; padding: 0 10px"
+                                (click)="closeUserInfo()"
+                            >
+                                X
+                            </button>
+                        </li>
+                        <li style="height: 80px">
+                            <img
+                                class="avt"
+                                src="{{ avatarLink }}"
+                                style="display: block; margin-left: auto; margin-right: auto"
+                            />
+                        </li>
+                        <li
+                            class="text-info"
+                            style="text-align: center; margin-bottom: 15px; font-weight: bold"
+                        >
+                            {{ fullName }}
+                        </li>
+                        <li
+                            class="text-info"
+                            style="text-align: center; font-weight: 500"
+                        >
+                            {{ email }}
+                        </li>
+                        <li>
+                            <button
+                                class="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
+                                (click)="logout()"
+                                style="padding: 10px 0; justify-content: center"
+                            >
+                                <svg
+                                    class="fill-current"
+                                    width="22"
+                                    height="22"
+                                    viewBox="0 0 22 22"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M15.5375 0.618744H11.6531C10.7594 0.618744 10.0031 1.37499 10.0031 2.26874V4.64062C10.0031 5.05312 10.3469 5.39687 10.7594 5.39687C11.1719 5.39687 11.55 5.05312 11.55 4.64062V2.23437C11.55 2.16562 11.5844 2.13124 11.6531 2.13124H15.5375C16.3625 2.13124 17.0156 2.78437 17.0156 3.60937V18.3562C17.0156 19.1812 16.3625 19.8344 15.5375 19.8344H11.6531C11.5844 19.8344 11.55 19.8 11.55 19.7312V17.3594C11.55 16.9469 11.2062 16.6031 10.7594 16.6031C10.3125 16.6031 10.0031 16.9469 10.0031 17.3594V19.7312C10.0031 20.625 10.7594 21.3812 11.6531 21.3812H15.5375C17.2219 21.3812 18.5625 20.0062 18.5625 18.3562V3.64374C18.5625 1.95937 17.1875 0.618744 15.5375 0.618744Z"
+                                        fill=""
+                                    ></path>
+                                    <path
+                                        d="M6.05001 11.7563H12.2031C12.6156 11.7563 12.9594 11.4125 12.9594 11C12.9594 10.5875 12.6156 10.2438 12.2031 10.2438H6.08439L8.21564 8.07813C8.52501 7.76875 8.52501 7.2875 8.21564 6.97812C7.90626 6.66875 7.42501 6.66875 7.11564 6.97812L3.67814 10.4844C3.36876 10.7938 3.36876 11.275 3.67814 11.5844L7.11564 15.0906C7.25314 15.2281 7.45939 15.3312 7.66564 15.3312C7.87189 15.3312 8.04376 15.2625 8.21564 15.125C8.52501 14.8156 8.52501 14.3344 8.21564 14.025L6.05001 11.7563Z"
+                                        fill=""
+                                    ></path>
+                                </svg>
+                                Log Out
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <span
+                class="tooltip-text"
+                *ngIf="!isShow"
+                >Account</span
+            >
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,774 @@
+<div
+    class="form-container"
+    [style]="hiddenTitle"
+    (click)="showForm()"
+>
+    <form>
+        <input
+            class="note-text"
+            type="text"
+            placeholder="Take a note..."
+        />
+        <div class="form-actions">
+            <div class="tooltip">
+                <span class="material-icons-outlined hover">check_box</span>
+                <span class="tooltip-text">New List</span>
+            </div>
+            <div class="tooltip">
+                <span class="material-icons-outlined hover">brush</span>
+                <span class="tooltip-text">New Drawing</span>
+            </div>
+            <div class="tooltip">
+                <span class="material-icons-outlined hover">image</span>
+                <span class="tooltip-text">New Image</span>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div
+    class="form-container active-form note-form"
+    [style]="hiddenForm"
+>
+    <form
+        [formGroup]="noteForm"
+        (ngSubmit)="onSave()"
+    >
+        <textarea
+            (input)="autoResizeTextarea($event.target)"
+            style="overflow: hidden; resize: none; width: 100%; box-sizing: border-box"
+            rows="1"
+            type="text"
+            class="note-title input-bordered w-full max-w-xs input-modal-share"
+            placeholder="Title"
+            formControlName="title"
+        ></textarea>
+
+        <input
+            class="note-text input input-bordered w-full max-w-xs input-modal-share"
+            type="text"
+            placeholder="Take a note..."
+            formControlName="content"
+        />
+        <div class="form-actions">
+            <div class="icons">
+                <div class="tooltip">
+                    <span class="material-icons-outlined hover small-icon">add_alert</span>
+                    <span class="tooltip-text">Remind me</span>
+                </div>
+                <div class="tooltip">
+                    <span class="material-icons-outlined hover small-icon">person_add</span>
+                    <span class="tooltip-text">Collaborator</span>
+                </div>
+                <div class="tooltip">
+                    <span class="material-icons-outlined hover small-icon">palette</span>
+                    <span class="tooltip-text">Change Color</span>
+                </div>
+                <div class="tooltip">
+                    <span class="material-icons-outlined hover small-icon">image</span>
+                    <span class="tooltip-text">Add Image</span>
+                </div>
+                <div class="tooltip">
+                    <span class="material-icons-outlined hover small-icon">archive</span>
+                    <span class="tooltip-text">Archive</span>
+                </div>
+                <div class="tooltip">
+                    <details class="dropdown">
+                        <summary class="material-icons-outlined hover small-icon">more_vert</summary>
+                        <ul
+                            class="menu dropdown-content bg-base-100 rounded-box z-[10] p-2 shadow"
+                            style="z-index: 999; width: max-content"
+                        >
+                            <li>
+                                <div class="dropdown">
+                                    <div
+                                        tabindex="0"
+                                        role="button"
+                                        class=""
+                                    >
+                                        <a>Add label</a>
+                                    </div>
+                                    <div
+                                        style="z-index: 9999"
+                                        tabindex="0"
+                                        class="popup-label dropdown-content card card-compacttext-primary-content z-[1] shadow"
+                                    >
+                                        <div
+                                            class="card-body"
+                                            style="padding: 15px"
+                                        >
+                                            <p class="card-title">Label note!</p>
+                                            <form [formGroup]="labelForm">
+                                                <input
+                                                    type="text"
+                                                    id="myInput"
+                                                    (keyup)="myFunction($event)"
+                                                    placeholder="Search for names.."
+                                                    title="Type in a name"
+                                                    formControlName="name"
+                                                />
+                                            </form>
+
+                                            <ul id="myUL">
+                                                <li *ngFor="let label of listLabels; let i = index">
+                                                    <label for="{{ i }}"
+                                                        ><input
+                                                            type="checkbox"
+                                                            name="{{ label.name }}"
+                                                            id="{{ i }}"
+                                                            value="label"
+                                                        />{{ label.name }}</label
+                                                    >
+                                                </li>
+                                            </ul>
+                                            <div
+                                                class="flex"
+                                                style="
+                                                    flex-direction: row;
+                                                    align-items: center;
+                                                    background-color: gainsboro;
+                                                    border-radius: 8px;
+                                                "
+                                                (click)="createLabel()"
+                                            >
+                                                <span
+                                                    class="material-icons-outlined small-icon"
+                                                    style="padding: 8px"
+                                                    >add</span
+                                                ><a>Create {{ labelForm.name }}</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </details>
+                </div>
+                <div class="tooltip">
+                    <span class="material-icons-outlined hover small-icon">undo</span>
+                    <span class="tooltip-text">Undo</span>
+                </div>
+                <div class="tooltip">
+                    <span class="material-icons-outlined hover small-icon">redo</span>
+                    <span class="tooltip-text">Redo</span>
+                </div>
+            </div>
+            <button
+                type="submit"
+                class="close-btn"
+                *ngIf="!isLoading"
+            >
+                Save
+            </button>
+            <span
+                *ngIf="isLoading"
+                class="loading loading-spinner loading-md"
+            ></span>
+        </div>
+    </form>
+</div>
+
+<dialog
+    #popupEditNote
+    id="my_modal_1"
+    class="modal"
+>
+    <div
+        class="modal-box active-form"
+        style="overflow-y: hidden; padding: 0px"
+    >
+        <form
+            [formGroup]="noteFormUpdate"
+            (ngSubmit)="onSaveUpdate()"
+            style="padding: 20px; padding-top: 30px"
+        >
+            <span style="font-weight: bold; font-size: larger; padding: 10px; padding-top: 0">Edit Note</span>
+            <input
+                type="text"
+                class="note-title update-input input input-bordered w-full max-w-xs input-modal-share"
+                formControlName="title"
+                autofocus
+                style="font-size: large; font-weight: 400"
+            />
+            <input
+                class="note-text update-input input input-bordered w-full max-w-xs input-modal-share"
+                type="text"
+                formControlName="content"
+            />
+            <div class="form-actions">
+                <div class="icons">
+                    <div class="tooltip">
+                        <span class="material-icons-outlined hover small-icon">add_alert</span>
+                        <span class="tooltip-text">Remind me</span>
+                    </div>
+                    <div class="tooltip">
+                        <span class="material-icons-outlined hover small-icon">person_add</span>
+                        <span class="tooltip-text">Collaborator</span>
+                    </div>
+                    <div class="tooltip">
+                        <span class="material-icons-outlined hover small-icon">palette</span>
+                        <span class="tooltip-text">Change Color</span>
+                    </div>
+                    <div class="tooltip">
+                        <span class="material-icons-outlined hover small-icon">image</span>
+                        <span class="tooltip-text">Add Image</span>
+                    </div>
+                    <div class="tooltip">
+                        <span class="material-icons-outlined hover small-icon">archive</span>
+                        <span class="tooltip-text">Archive</span>
+                    </div>
+                    <div class="tooltip">
+                        <span class="material-icons-outlined hover small-icon">more_vert</span>
+                        <span class="tooltip-text">More</span>
+                    </div>
+                    <div class="tooltip">
+                        <span class="material-icons-outlined hover small-icon">undo</span>
+                        <span class="tooltip-text">Undo</span>
+                    </div>
+                    <div class="tooltip">
+                        <span class="material-icons-outlined hover small-icon">redo</span>
+                        <span class="tooltip-text">Redo</span>
+                    </div>
+                </div>
+                <button
+                    *ngIf="!isLoadingUpdate"
+                    type="submit"
+                    class="close-btn"
+                    style="margin-right: 10px"
+                >
+                    Save
+                </button>
+                <span
+                    *ngIf="isLoadingUpdate"
+                    class="loading loading-spinner loading-md"
+                ></span>
+            </div>
+        </form>
+        <form
+            method="dialog"
+            style="display: none"
+        >
+            <button
+                class="btn"
+                id="btnCLick"
+                #closeDialogUpdate
+            >
+                Close
+            </button>
+        </form>
+    </div>
+</dialog>
+
+<dialog
+    #popupShare
+    id="modal_collab"
+    class="modal"
+>
+    <div
+        class="modal-box active-form"
+        style="padding: 0px; overflow: visible"
+    >
+        <form
+            [formGroup]="formShare"
+            style="padding: 20px"
+        >
+            <span style="font-weight: bold; font-size: large; padding-bottom: 10px">Collaboration</span>
+            <div>
+                <span
+                    style="font-weight: bold; font-size: small; padding-bottom: 10px"
+                    *ngIf="listUserCollabOfNote.length > 0"
+                    >User cooperated</span
+                >
+                <span
+                    *ngIf="listUserCollabOfNote.length == 0"
+                    class="loading loading-spinner loading-md"
+                    style="margin: 0 auto"
+                ></span>
+                <ul
+                    class="flex rounded-box"
+                    style="padding-top: 0; flex-direction: row; gap: 10px; flex-wrap: wrap"
+                >
+                    <li
+                        class="flex li-user"
+                        *ngFor="let user of listUserCollabOfNote; let i = index"
+                    >
+                        <div
+                            class="avatar"
+                            style="display: flex; align-items: center"
+                        >
+                            <div
+                                class="rounded-full w-7"
+                                style="height: 1.75rem"
+                            >
+                                <img
+                                    class="w-7"
+                                    src="{{ user.avatarUrl }}"
+                                />
+                            </div>
+                        </div>
+
+                        <a style="align-self: center; font-weight: bold">{{ user.username }}</a>
+                        <span
+                            class="material-icons-outlined hover small-icon"
+                            (click)="deleteUserCooperated(user.id)"
+                            >delete</span
+                        >
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <span
+                    style="font-weight: bold; font-size: small; padding-bottom: 10px"
+                    *ngIf="listUserCollab.length > 0"
+                    >User are cooperating</span
+                >
+                <ul
+                    class="flex rounded-box"
+                    style="padding-top: 0; flex-direction: row; gap: 10px; flex-wrap: wrap"
+                >
+                    <li
+                        class="flex li-user"
+                        *ngFor="let user of listUserCollab; let i = index"
+                    >
+                        <div
+                            class="avatar"
+                            style="display: flex; align-items: center"
+                        >
+                            <div
+                                class="rounded-full w-7"
+                                style="height: 1.75rem"
+                            >
+                                <img
+                                    class="w-7"
+                                    src="{{ user.avatarUrl }}"
+                                />
+                            </div>
+                        </div>
+                        <a style="align-self: center; font-weight: bold">{{ user.username }}</a>
+                        <span
+                            class="material-icons-outlined hover small-icon"
+                            (click)="deleteUser(user.id)"
+                            >delete</span
+                        >
+                    </li>
+                </ul>
+            </div>
+
+            <div
+                class="ng-autocomplete input-bordered w-full max-w-xs input-modal-share"
+                style="
+                    border: 1px solid #e0e1e0;
+                    box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
+                "
+            >
+                <ng-autocomplete
+                    #autocomplete
+                    [data]="listUser"
+                    searchKeyword="username"
+                    placeholder="Input username"
+                    (selected)="selectEvent($event)"
+                    (inputChanged)="onChangeSearch($event)"
+                    (inputFocused)="onFocused($event)"
+                    [itemTemplate]="itemTemplate"
+                    [notFoundTemplate]="notFoundTemplate"
+                >
+                </ng-autocomplete>
+
+                <ng-template
+                    #itemTemplate
+                    let-item
+                >
+                    <a
+                        style="padding: 7px"
+                        [innerHTML]="item.username"
+                    ></a>
+                </ng-template>
+
+                <ng-template
+                    #notFoundTemplate
+                    let-notFound
+                >
+                    <div [innerHTML]="notFound"></div>
+                </ng-template>
+            </div>
+            <div style="text-align: end">
+                <button
+                    class="btn close-modal-share"
+                    (click)="cancelCollab()"
+                >
+                    Cancel
+                </button>
+                <button
+                    *ngIf="!isLoadingCollabUpdate"
+                    (click)="onShare()"
+                    class="btn close-modal-share"
+                    style="margin-left: 15px"
+                >
+                    Save
+                </button>
+                <span
+                    *ngIf="isLoadingCollabUpdate"
+                    class="loading loading-spinner loading-md"
+                    style="margin: 0 auto"
+                ></span>
+            </div>
+        </form>
+
+        <form
+            method="dialog"
+            style="display: none"
+        >
+            <button
+                class="btn"
+                id="btnCloseCollabCLick"
+                #closeDialogCollabUpdate
+            >
+                Close
+            </button>
+        </form>
+    </div>
+</dialog>
+
+<div class="notes-container">
+    <div
+        class="note-type"
+        *ngIf="listPinNote.length > 0"
+    >
+        PINNED
+    </div>
+    <div class="list-note">
+        <div
+            class="notes"
+            *ngFor="let note of listPinNote; let i = index"
+        >
+            <div
+                [className]="mouseHoverIndexPinNote != i ? 'note default-border' : 'note hover-border'"
+                (mouseenter)="mouseEnterPinNote(i)"
+                (mouseleave)="mouseLeavePinNote()"
+            >
+                <span
+                    class="material-icons check-circle"
+                    [style]="mouseHoverIndexPinNote != i ? 'visibility: hidden' : ''"
+                    >check_circle</span
+                >
+                <div
+                    class="flex"
+                    style="flex-direction: row; justify-content: space-between"
+                >
+                    <div
+                        (click)="showModal(note)"
+                        class="title"
+                        style="overflow-wrap: break-word; width: 80%"
+                    >
+                        {{ note.title | truncate : 70 }}
+                    </div>
+                    <div class="tooltip">
+                        <span
+                            class="material-icons-outlined hover"
+                            [style]="mouseHoverIndexPinNote != i ? 'visibility: hidden' : ''"
+                            (click)="pinNote(note)"
+                            style="padding: 6px; margin: 4px"
+                            >my_location</span
+                        >
+                        <span class="tooltip-text">Unpin note</span>
+                    </div>
+                </div>
+
+                <div
+                    (click)="showModal(note)"
+                    class="text"
+                    style="overflow-wrap: break-word"
+                >
+                    {{ note.content }}
+                </div>
+                <div
+                    class="empty-note"
+                    (click)="showModal(note)"
+                    *ngIf="note.title == '' && note.content == ''"
+                    style="height: 40px"
+                >
+                    Empty note
+                </div>
+
+                <div
+                    class="note-footer"
+                    [style]="mouseHoverIndexPinNote != i ? 'visibility: hidden' : ''"
+                >
+                    <div class="tooltip">
+                        <span class="material-icons-outlined hover small-icon">add_alert</span>
+                        <span class="tooltip-text">Remind me</span>
+                    </div>
+                    <div class="tooltip">
+                        <span
+                            class="material-icons-outlined hover small-icon"
+                            (click)="showModalShare(note)"
+                            >person_add</span
+                        >
+                        <span class="tooltip-text">Collaborator</span>
+                    </div>
+                    <div class="tooltip">
+                        <span class="material-icons-outlined hover small-icon">palette</span>
+                        <span class="tooltip-text">Change Color</span>
+                    </div>
+                    <div class="tooltip">
+                        <span class="material-icons-outlined hover small-icon">image</span>
+                        <span class="tooltip-text">Add Image</span>
+                    </div>
+                    <div class="tooltip">
+                        <span class="material-icons-outlined hover small-icon">archive</span>
+                        <span class="tooltip-text">Archive</span>
+                    </div>
+                    <div class="tooltip">
+                        <details class="dropdown">
+                            <summary class="material-icons-outlined hover small-icon">more_vert</summary>
+                            <ul
+                                class="menu dropdown-content bg-base-100 rounded-box z-[10] p-2 shadow"
+                                style="z-index: 999; width: max-content"
+                            >
+                                <li (click)="delete(note.id)">
+                                    <a>Delete</a>
+                                </li>
+                                <li>
+                                    <div class="dropdown">
+                                        <div
+                                            tabindex="0"
+                                            role="button"
+                                            class=""
+                                        >
+                                            <a>Add label</a>
+                                        </div>
+                                        <div
+                                            style="z-index: 9999"
+                                            tabindex="0"
+                                            class="popup-label dropdown-content card card-compacttext-primary-content z-[1] shadow"
+                                        >
+                                            <div
+                                                class="card-body"
+                                                style="padding: 15px"
+                                            >
+                                                <p class="card-title">Label note!</p>
+                                                <form [formGroup]="labelForm">
+                                                    <input
+                                                        type="text"
+                                                        id="myInput"
+                                                        (inputChanged)="myFunction($event)"
+                                                        placeholder="Search for names.."
+                                                        title="Type in a name"
+                                                        formControlName="name"
+                                                    />
+                                                </form>
+
+                                                <ul id="myUL">
+                                                    <li
+                                                        *ngFor="let label of listLabels; let i = index"
+                                                        (click)="addLabel(label, note.id)"
+                                                    >
+                                                        <label for="{{ i }}"
+                                                            ><input
+                                                                type="checkbox"
+                                                                name="{{ label.name }}"
+                                                                id="{{ i }}"
+                                                                value="label"
+                                                            />{{ label.name }}</label
+                                                        >
+                                                    </li>
+                                                </ul>
+                                                <div
+                                                    class="flex"
+                                                    style="
+                                                        flex-direction: row;
+                                                        align-items: center;
+                                                        background-color: gainsboro;
+                                                        border-radius: 8px;
+                                                    "
+                                                    (click)="createLabel()"
+                                                >
+                                                    <span
+                                                        class="material-icons-outlined small-icon"
+                                                        style="padding: 8px"
+                                                        >add</span
+                                                    ><a>Create {{ labelForm.name }}</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </details>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div
+    class="notes-container"
+    style="margin-top: 20px"
+>
+    <div
+        class="note-type"
+        *ngIf="listPinNote.length > 0"
+    >
+        ORTHER
+    </div>
+    <div class="list-note">
+        <div
+            class="notes"
+            *ngFor="let note of listNote; let i = index"
+        >
+            <div
+                [className]="mouseHoverIndex != i ? 'note default-border' : 'note hover-border'"
+                (mouseenter)="mouseEnter(i)"
+                (mouseleave)="mouseLeave()"
+            >
+                <span
+                    class="material-icons check-circle"
+                    [style]="mouseHoverIndex != i ? 'visibility: hidden' : ''"
+                    >check_circle</span
+                >
+                <div
+                    class="flex"
+                    style="flex-direction: row; justify-content: space-between"
+                >
+                    <div
+                        (click)="showModal(note)"
+                        class="title"
+                        style="overflow-wrap: break-word; width: 80%; padding-right: 0"
+                    >
+                        {{ note.title | truncate : 70 }}
+                    </div>
+
+                    <!-- <div class="tooltip"> -->
+                    <span
+                        class="material-icons-outlined hover"
+                        [style]="mouseHoverIndex != i ? 'visibility: hidden' : ''"
+                        (click)="pinNote(note)"
+                        style="padding: 6px; margin: 4px"
+                        >location_searching</span
+                    >
+                    <span class="tooltip-text">Pin note</span>
+                    <!-- </div> -->
+                </div>
+
+                <div
+                    (click)="showModal(note)"
+                    class="text"
+                    style="overflow-wrap: break-word"
+                >
+                    {{ note.content }}
+                </div>
+                <div
+                    class="empty-note"
+                    (click)="showModal(note)"
+                    *ngIf="note.title == '' && note.content == ''"
+                    style="height: 40px"
+                >
+                    Empty note
+                </div>
+
+                <div
+                    class="note-footer"
+                    [style]="mouseHoverIndex != i ? 'visibility: hidden' : ''"
+                >
+                    <div class="tooltip">
+                        <span class="material-icons-outlined hover small-icon">add_alert</span>
+                        <span class="tooltip-text">Remind me</span>
+                    </div>
+                    <div class="tooltip">
+                        <span
+                            class="material-icons-outlined hover small-icon"
+                            (click)="showModalShare(note)"
+                            >person_add</span
+                        >
+                        <span class="tooltip-text">Collaborator</span>
+                    </div>
+                    <div class="tooltip">
+                        <span class="material-icons-outlined hover small-icon">palette</span>
+                        <span class="tooltip-text">Change Color</span>
+                    </div>
+                    <div class="tooltip">
+                        <span class="material-icons-outlined hover small-icon">image</span>
+                        <span class="tooltip-text">Add Image</span>
+                    </div>
+                    <div class="tooltip">
+                        <span class="material-icons-outlined hover small-icon">archive</span>
+                        <span class="tooltip-text">Archive</span>
+                    </div>
+                    <div class="tooltip">
+                        <details class="dropdown">
+                            <summary class="material-icons-outlined hover small-icon">more_vert</summary>
+                            <ul
+                                class="menu dropdown-content bg-base-100 rounded-box z-[10] p-2 shadow"
+                                style="z-index: 999; width: max-content"
+                            >
+                                <li (click)="delete(note.id)">
+                                    <a>Delete</a>
+                                </li>
+                                <li>
+                                    <a>Add label</a>
+                                </li>
+                            </ul>
+                        </details>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal">
+    <div class="modal-content">
+        <div class="form-container active-form">
+            <form>
+                <input
+                    type="text"
+                    class="note-title"
+                    placeholder="Title"
+                />
+                <input
+                    class="note-text"
+                    type="text"
+                    placeholder="Take a note..."
+                />
+                <div class="form-actions">
+                    <div class="icons">
+                        <div class="tooltip">
+                            <span class="material-icons-outlined hover small-icon">add_alert</span>
+                            <span class="tooltip-text">Remind me</span>
+                        </div>
+                        <div class="tooltip">
+                            <span class="material-icons-outlined hover small-icon">person_add</span>
+                            <span class="tooltip-text">Collaborator</span>
+                        </div>
+                        <div class="tooltip">
+                            <span class="material-icons-outlined hover small-icon">palette</span>
+                            <span class="tooltip-text">Change Color</span>
+                        </div>
+                        <div class="tooltip">
+                            <span class="material-icons-outlined hover small-icon">image</span>
+                            <span class="tooltip-text">Add Image</span>
+                        </div>
+                        <div class="tooltip">
+                            <span class="material-icons-outlined hover small-icon">archive</span>
+                            <span class="tooltip-text">Archive</span>
+                        </div>
+                        <div class="tooltip">
+                            <span class="material-icons-outlined hover small-icon">more_vert</span>
+                            <span class="tooltip-text">More</span>
+                        </div>
+                        <div class="tooltip">
+                            <span class="material-icons-outlined hover small-icon">undo</span>
+                            <span class="tooltip-text">Undo</span>
+                        </div>
+                        <div class="tooltip">
+                            <span class="material-icons-outlined hover small-icon">redo</span>
+                            <span class="tooltip-text">Redo</span>
+                        </div>
+                    </div>
+                    <button class="close-btn">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
